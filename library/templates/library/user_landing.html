@@ -1,0 +1,290 @@
+{% extends 'library/base.html' %} 
+{% load static %} 
+{% load widget_tweaks %} 
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center">Assalamu Alaikum, {{ user.username }}</h2>
+  <p class="text-center ">পড়ো তোমার প্রভুর নামে, যিনি সৃষ্টি করেছেন (সূরা আল-আলাক: আয়াত ১)</p>
+  <h6 class="text-center">You can choose any book from this given list and Request to borrow. Happy Reading (^_^)</h6>
+  <br>
+  <ul class="nav nav-tabs" id="userTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <a
+        class="nav-link active"
+        id="book-list-tab"
+        data-bs-toggle="tab"
+        href="#book-list"
+        role="tab"
+        >Book List</a
+      >
+    </li>
+    <li class="nav-item" role="presentation">
+      <a
+        class="nav-link"
+        id="requested-books-tab"
+        data-bs-toggle="tab"
+        href="#requested-books"
+        role="tab"
+        >Requested Books</a
+      >
+    </li>
+    <li class="nav-item" role="presentation">
+      <a
+        class="nav-link"
+        id="accepted-history-tab"
+        data-bs-toggle="tab"
+        href="#accepted-history"
+        role="tab"
+        >Accepted History</a
+      >
+    </li>
+  </ul>
+  <div class="tab-content" id="userTabContent">
+    <!-- Book List Tab -->
+    <div class="tab-pane fade show active" id="book-list" role="tabpanel">
+      <h3>Book List</h3>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Book Name</th>
+              <th scope="col">Writer</th>
+              <th scope="col">Details</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for book in books %}
+            <tr>
+              <td>{{ book.name }}</td>
+              <td>{{ book.writer }}</td>
+              <td>
+                <a
+                  href="#"
+                  data-bs-toggle="modal"
+                  data-bs-target="#detailsModal{{ book.id }}"
+                  >View Details</a
+                >
+              </td>
+              <td>
+                <button
+                  class="btn btn-primary btn-sm"
+                  data-bs-toggle="modal"
+                  data-bs-target="#requestModal{{ book.id }}"
+                >
+                  Request
+                </button>
+              </td>
+            </tr>
+            <!-- Details Modal -->
+            <div
+              class="modal fade"
+              id="detailsModal{{ book.id }}"
+              tabindex="-1"
+              aria-labelledby="detailsModalLabel{{ book.id }}"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel{{ book.id }}">
+                      {{ book.name }}
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>{{ book.details }}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Request Modal -->
+            <div
+              class="modal fade"
+              id="requestModal{{ book.id }}"
+              tabindex="-1"
+              aria-labelledby="requestModalLabel{{ book.id }}"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="requestModalLabel{{ book.id }}">
+                      Request {{ book.name }}
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <form method="post" action="{% url 'request_book' %}">
+                      {% csrf_token %}
+                      <input
+                        type="hidden"
+                        name="book_id"
+                        value="{{ book.id }}"
+                      />
+                      {% for field in form %}
+                      <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label"
+                          >{{ field.label }}</label
+                        >
+                        {{ field|add_class:"form-control" }}
+                      </div>
+                      {% endfor %}
+                      <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                          Submit Request
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Requested Books Tab -->
+    <div class="tab-pane fade" id="requested-books" role="tabpanel">
+      <h3>Requested Books</h3>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Book Name</th>
+              <th scope="col">Details</th>
+              <th scope="col">Borrow Duration</th>
+              <th scope="col">Request Date</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for req in user_requests %}
+            <tr>
+              <td>{{ req.book.name }}</td>
+              <td>
+                <a
+                  href="#"
+                  data-bs-toggle="modal"
+                  data-bs-target="#detailsModalReq{{ req.book.id }}"
+                  >View Details</a
+                >
+              </td>
+              <td>{{ req.borrow_duration }} days</td>
+              <td>{{ req.request_date|date:"Y-m-d" }}</td>
+              <td>
+                <a
+                  href="{% url 'cancel_request' req.id %}"
+                  class="btn btn-danger btn-sm"
+                  >Cancel</a
+                >
+              </td>
+            </tr>
+            <!-- Details Modal for Requested Books -->
+            <div
+              class="modal fade"
+              id="detailsModalReq{{ req.book.id }}"
+              tabindex="-1"
+              aria-labelledby="detailsModalReqLabel{{ req.book.id }}"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5
+                      class="modal-title"
+                      id="detailsModalReqLabel{{ req.book.id }}"
+                    >
+                      {{ req.book.name }}
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>{{ req.book.details }}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Accepted History Tab -->
+    <div class="tab-pane fade" id="accepted-history" role="tabpanel">
+      <h3>Accepted Request History</h3>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Book Name</th>
+              <th scope="col">Issued Date</th>
+              <th scope="col">Issued Duration</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for req in accepted_requests %}
+            <tr>
+              <td>{{ req.book.name }}</td>
+              <td>{{ req.issued_date|date:"Y-m-d" }}</td>
+              <td>{{ req.issued_duration }} days</td>
+              <td>
+                <span
+                  class="badge {% if req.status == 'accepted' %}bg-success{% elif req.status == 'returned' %}bg-secondary{% else %}bg-warning{% endif %}"
+                >
+                  {{ req.status|title }}
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <p class="font-bold">বই বিনিময় কি? কেনো?</p>
+
+  <div>আমাদের মন্তব্য হচ্ছে—বই ও লেখা কখনো পুরনো হয় না। কারো পড়া নতুন বইটি যখন নতুন একজনের হাতে পৌঁছায়, তখন সেটি হয়ে ওঠে একদম নতুন। বইটি পড়ার পর তার জ্ঞান আরও তীক্ষ্ণ হয়, অন্তর হয় আরও পরিশালিত। এই চিন্তা থেকে বই বিনিময় কার্যক্রমের কথা মাথায় আসে জ্ঞানের কাফেলা সদস্যবৃন্দ দের।</div>
+  <br>
+  <div class="font-bold">Contact Us: +8801636499059</div>
+  <br>
+  <br>
+  
+</div>
+{% endblock %}

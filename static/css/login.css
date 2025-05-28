@@ -1,0 +1,98 @@
+/* static/css/style.css */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.navbar {
+    background: linear-gradient(90deg, #1a2a6c, #b21f1f);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    color: #fff !important;
+    transition: color 0.3s;
+}
+
+.navbar-brand:hover {
+    color: #ffd700 !important;
+}
+
+.nav-link {
+    color: #fff !important;
+    font-weight: 500;
+    transition: color 0.3s, transform 0.2s;
+    margin-left: 10px;
+}
+
+.nav-link:hover {
+    color: #ffd700 !important;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: #e44d26;
+    border: none;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.btn-danger:hover {
+    background: #c13515;
+    transform: scale(1.05);
+}
+
+.btn-primary {
+    background: #1a2a6c;
+    border: none;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.btn-primary:hover {
+    background: #0d1a3b;
+    transform: scale(1.05);
+}
+
+.alert {
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus {
+    border-color: #1a2a6c;
+    box-shadow: 0 0 8px rgba(26, 42, 108, 0.3);
+}
+
+.container {
+    max-width: 1200px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .nav-link {
+        margin-left: 5px;
+        font-size: 0.9rem;
+    }
+}
